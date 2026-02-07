@@ -235,7 +235,7 @@ describe('createAgents', () => {
     expect(longFixer?.config.model).toBe('test/fixer-custom-model');
   });
 
-  test('quick-fixer and long-fixer inherit librarian model when fixer has no config', () => {
+  test('quick-fixer and long-fixer use their own defaults when fixer has no config', () => {
     const config: PluginConfig = {
       experimental: { granularFixers: true },
       agents: {
@@ -245,8 +245,24 @@ describe('createAgents', () => {
     const agents = createAgents(config);
     const quickFixer = agents.find((a) => a.name === 'quick-fixer');
     const longFixer = agents.find((a) => a.name === 'long-fixer');
-    expect(quickFixer?.config.model).toBe('test/librarian-custom-model');
-    expect(longFixer?.config.model).toBe('test/librarian-custom-model');
+    // Should use DEFAULT_MODELS['quick-fixer'] and DEFAULT_MODELS['long-fixer'],
+    // not inherit from librarian
+    expect(quickFixer?.config.model).toBe('openai/gpt-5-nano');
+    expect(longFixer?.config.model).toBe('openai/gpt-5.1-codex-mini');
+  });
+
+  test('zero-config granular fixers receive their own default models', () => {
+    const config: PluginConfig = {
+      experimental: { granularFixers: true },
+    };
+    const agents = createAgents(config);
+    const quickFixer = agents.find((a) => a.name === 'quick-fixer');
+    const longFixer = agents.find((a) => a.name === 'long-fixer');
+    // With no agents configured at all, granular fixers should get
+    // their own DEFAULT_MODELS entries, not the librarian model
+    expect(longFixer?.config.model).toBe('openai/gpt-5.1-codex-mini');
+    expect(quickFixer?.config.model).toBe('openai/gpt-5-nano');
+    expect(quickFixer?.config.model).not.toBe(longFixer?.config.model);
   });
 
   test('quick-fixer and long-fixer use explicit config over fixer inheritance', () => {

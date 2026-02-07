@@ -18,8 +18,32 @@ export const ORCHESTRATOR_NAME = 'orchestrator' as const;
 
 export const ALL_AGENT_NAMES = [ORCHESTRATOR_NAME, ...SUBAGENT_NAMES] as const;
 
-// Agent name type (for use in DEFAULT_MODELS)
+// Agent name types
 export type AgentName = (typeof ALL_AGENT_NAMES)[number];
+export type SubagentName = (typeof SUBAGENT_NAMES)[number];
+
+// Granular fixer names (long-fixer and quick-fixer)
+export const GRANULAR_FIXER_NAMES = ['long-fixer', 'quick-fixer'] as const;
+
+/**
+ * Check if an agent name is a granular fixer (long-fixer or quick-fixer).
+ */
+export function isGranularFixer(name: string): boolean {
+  return (GRANULAR_FIXER_NAMES as readonly string[]).includes(name);
+}
+
+/**
+ * Get the list of active subagent names based on configuration.
+ * Filters out granular fixers when the experimental flag is disabled.
+ */
+export function getActiveSubagentNames(config?: {
+  experimental?: { granularFixers?: boolean };
+}): SubagentName[] {
+  const granularFixersEnabled = config?.experimental?.granularFixers ?? false;
+  return SUBAGENT_NAMES.filter(
+    (name) => !isGranularFixer(name) || granularFixersEnabled,
+  );
+}
 
 // Subagent delegation rules: which agents can spawn which subagents
 // orchestrator: can spawn all subagents (full delegation)

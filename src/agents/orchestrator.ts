@@ -67,7 +67,9 @@ const GRANULAR_FIXER_DESCRIPTION = `@long-fixer / @quick-fixer
 **Delegate when:** Clearly specified with known approach • 3+ independent parallel tasks • Straightforward but time-consuming • Solid plan needing execution
 **Don't delegate when:** Needs discovery/research/decisions • Unclear requirements needing iteration • Explaining > doing
 **Parallelization:** 3+ independent tasks → spawn multiple @quick-fixer agents. 1-2 simple tasks → do yourself.
-**Rule of thumb:** Explaining > doing? → yourself. Multi-file refactor? → @long-fixer. Can split to parallel streams? → multiple @quick-fixers.`;
+**Rule of thumb:** Explaining > doing? → yourself. Multi-file refactor? → @long-fixer. Can split to parallel streams? → multiple @quick-fixers.
+
+Note: @fixer is also available as a general-purpose fallback when scope is unclear or doesn't fit neatly into long vs quick.`;
 
 const COMMUNICATION_SECTION = `<Communication>
 
@@ -102,7 +104,7 @@ When user's approach seems problematic:
 
 // --- Prompt builder ---
 
-function buildOrchestratorPrompt(granularFixers: boolean): string {
+export function buildOrchestratorPrompt(granularFixers: boolean): string {
   const fixerDescription = granularFixers
     ? GRANULAR_FIXER_DESCRIPTION
     : BASE_FIXER_DESCRIPTION;

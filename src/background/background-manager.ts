@@ -17,6 +17,7 @@ import type { PluginInput } from '@opencode-ai/plugin';
 import type { BackgroundTaskConfig, PluginConfig } from '../config';
 import {
   FALLBACK_FAILOVER_TIMEOUT_MS,
+  isGranularFixer,
   SUBAGENT_DELEGATION_RULES,
 } from '../config';
 import type { TmuxConfig } from '../config/schema';
@@ -142,9 +143,7 @@ export class BackgroundTaskManager {
     // by createAgents().
     const granularFixers = this.config?.experimental?.granularFixers ?? false;
     if (!granularFixers) {
-      return rules.filter(
-        (name) => name !== 'long-fixer' && name !== 'quick-fixer',
-      );
+      return rules.filter((name) => !isGranularFixer(name));
     }
 
     return rules;

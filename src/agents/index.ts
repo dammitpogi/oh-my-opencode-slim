@@ -4,9 +4,11 @@ import {
   type AgentOverrideConfig,
   DEFAULT_MODELS,
   getAgentOverride,
+  isGranularFixer,
   loadAgentPrompt,
   type PluginConfig,
   SUBAGENT_NAMES,
+  type SubagentName,
 } from '../config';
 import { getAgentMcpList } from '../config/agent-mcps';
 
@@ -77,7 +79,7 @@ function applyDefaultPermissions(
 
 // Agent Classification
 
-export type SubagentName = (typeof SUBAGENT_NAMES)[number];
+export type { SubagentName };
 
 export function isSubagent(name: string): name is SubagentName {
   return (SUBAGENT_NAMES as readonly string[]).includes(name);
@@ -106,7 +108,7 @@ const SUBAGENT_FACTORIES: Record<SubagentName, AgentFactory> = {
  */
 export function createAgents(config?: PluginConfig): AgentDefinition[] {
   // Get model for an agent with fallback logic for backwards compatibility.
-  // long-fixer and quick-fixer fall back to fixer's model if not configured.
+  // long-fixer and quick-fixer fall back to fixer's config, then their own DEFAULT_MODELS entry.
   // fixer falls back to librarian's model if not configured (for backwards compatibility).
   const getModelForAgent = (name: SubagentName): string => {
     const agentOverride = getAgentOverride(config, name);
@@ -115,15 +117,13 @@ export function createAgents(config?: PluginConfig): AgentDefinition[] {
     }
 
     // For long-fixer and quick-fixer, fall back to fixer's config
-    if (name === 'long-fixer' || name === 'quick-fixer') {
+    if (isGranularFixer(name)) {
       const fixerOverride = getAgentOverride(config, 'fixer');
       if (fixerOverride?.model) {
         return fixerOverride.model;
       }
-      // If fixer has no config, inherit from librarian (existing backwards compat logic)
-      return (
-        getAgentOverride(config, 'librarian')?.model ?? DEFAULT_MODELS.librarian
-      );
+      // Use the agent's own default model from DEFAULT_MODELS
+      return DEFAULT_MODELS[name];
     }
 
     // For fixer, fall back to librarian (backwards compatibility)
@@ -146,7 +146,7 @@ export function createAgents(config?: PluginConfig): AgentDefinition[] {
   )
     .filter(([name]) => {
       // Exclude granular fixers unless the experimental flag is enabled
-      if (name === 'long-fixer' || name === 'quick-fixer') {
+      if (isGranularFixer(name)) {
         return granularFixersEnabled;
       }
       return true;
