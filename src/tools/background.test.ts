@@ -31,7 +31,6 @@ function getAgentArgDescription(
 ): string {
   // ToolDefinition.args is the ZodRawShape, and agent is a ZodString
   // with .describe() set — Zod exposes that as schema.description
-  // biome-ignore lint/suspicious/noExplicitAny: accessing Zod internals
   const agentSchema = (tools.background_task.args as any).agent;
   return (agentSchema?.description as string) ?? '';
 }

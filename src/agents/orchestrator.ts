@@ -22,7 +22,7 @@ const COMMON_AGENT_DESCRIPTIONS = `@explorer
 - Role: Authoritative source for current library docs and API references
 - Capabilities: Fetches latest official docs, examples, API signatures, version-specific behavior via grep_app MCP
 - **Delegate when:** Libraries with frequent API changes (React, Next.js, AI SDKs) • Complex APIs needing official examples (ORMs, auth) • Version-specific behavior matters • Unfamiliar library • Edge cases or advanced features • Nuanced best practices
-- **Don't delegate when:** Standard usage you're confident about (\\\`Array.map()\\\`, \\\`fetch()\\\`) • Simple stable APIs • General programming knowledge • Info already in conversation • Built-in language features
+- **Don't delegate when:** Standard usage you're confident about (\`Array.map()\`, \`fetch()\`) • Simple stable APIs • General programming knowledge • Info already in conversation • Built-in language features
 - **Rule of thumb:** "How does this library work?" → @librarian. "How does programming work?" → yourself.
 
 @oracle
@@ -154,7 +154,7 @@ Each specialist delivers 10x results in their domain:
 ${fixerDelegationLine}
 
 **Delegation efficiency:**
-- Reference paths/lines, don't paste files (\\\`src/app.ts:42\\\` not full contents)
+- Reference paths/lines, don't paste files (\`src/app.ts:42\` not full contents)
 - Provide context summaries, let specialists read what they need
 - Brief user on delegation goal before each call
 - Skip delegation if overhead ≥ doing it yourself
@@ -178,8 +178,8 @@ Balance: respect dependencies, avoid parallelizing what must be sequential.
 5. Adjust if needed
 
 ## 6. Verify
-- Run \\\`lsp_diagnostics\\\` for errors
-- Suggest \\\`simplify\\\` skill when applicable
+- Run \`lsp_diagnostics\` for errors
+- Suggest \`simplify\` skill when applicable
 - Confirm specialists completed successfully
 - Verify solution meets requirements
 
